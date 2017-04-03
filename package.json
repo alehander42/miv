@@ -1,0 +1,18 @@
+{
+  "name": "miv",
+  "version": "0.1.0",
+  "description": "experimenting with writing a nim electron app",
+  "main": "main.js",
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "electron-debug": "^1.0.0"
+  },
+  "devDependencies": {
+    "devtron": "^1.1.0",
+    "electron-packager": "^8.0.0",
+    "electron": "^1.0.1",
+    "xo": "^0.16.0"
+  }
+}
