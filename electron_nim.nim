@@ -45,13 +45,5 @@ type
     backgroundColor*: string
 
 var
-  # electron* {.importc, nodecl.}: Electron
   process* {.importcpp, nodecl.}: ElectronProcess
   require* {.importc, nodecl.}: proc (l: cstring): Electron
-
-# template BrowserWindow(): untyped = 
-#   electron.BrowserWindow
-
-
-# let process* = ElectronProcess(platform: "linux")
-# let app* = ElectronApp()
