@@ -3,33 +3,39 @@ import electron_nim
 
 let electron = require("electron")
 
-var mainWindow: electron.BrowserWindow
-var app: ElectronApp = electron.app
+var mainWindow: JsObject
+var app = electron.app
 
 proc onClosed() =
   mainWindow = nil
 
-proc createMainWindow(): BrowserWindow =
-  let win = BrowserWindow(width: 400, height: 400)
+proc js[K, V](fields: openarray[(K, V)]): JsObject =
+  result = newJsObject()
+  for i, pair in fields:
+    result[pair[0]] = pair[1]
+
+proc jsnew*(x: auto): JsObject {. importcpp: "(new #)" .}
+
+proc createMainWindow(): JsObject =
+  let win = jsnew electron.BrowserWindow({ "width": 400, "height": 400 }.js)
   # let dirname = os.getCurrentDir()
-  let dirname = "some hardcoded name"
-  win.loadURL("file://" & dirname & "/index.html")
-  win.on(evClosed, onClosed)
+  let url = "file://" & currentSourcePath.replace(".nim", ".html")
+  discard win.loadURL(cstring(url))
+  discard win.on("closed", onClosed)
   return win
 
-app.on(evWindowAllClosed, proc() =
+proc windowClosed =
   if process.platform != "darwin":
-    app.quit())
+    discard app.quit()
 
-app.on(evActivate, proc() =
+proc windowActivated =
   if mainWindow == nil:
-    mainWindow = createMainWindow())
+    mainWindow = createMainWindow()
 
-app.on(evReady, proc() =
-  mainWindow = createMainWindow())
+proc appReady =
+  mainWindow = createMainWindow()
 
-
-
-
-
+discard app.on(cstring("window-all-closed"), windowClosed)
+discard app.on(cstring("activate"), windowActivated)
+discard app.on(cstring("ready"), appReady)
 

@@ -4,7 +4,7 @@ when not defined(js):
   {.error "Electron is only available for javascript"}
 
 type
-  ElectronGlobal* {.importc.} = ref object of RootObj
+  ElectronGlobal* {.importc.} = ref object of JsObject
     version*: cstring
 
   EventTarget* = ref object
@@ -14,27 +14,23 @@ type
     target*: EventTarget
     `type`: cstring
 
-  ElectronApp* {.importc.} = ref object of RootObj
-    on*: proc(event: EventName, f: proc(): void): void
+  ElectronApp* {.importc.} = ref object of JsObject
     quit*: proc(): void
   
-  ElectronProcess* {.importc.} = ref object of RootObj
+  ElectronProcess* {.importc.} = ref object of JsObject
     platform*: cstring
 
-  Electron* = ref object of RootObj
+  Electron* = ref object of JsObject
     app*: ElectronApp
     BrowserWindow*: BrowserWindow
 
-  EventName* = enum evWindowAllClosed, evReady, evActivate, evClosed
-  
   Attrs* = ref object
     onClick*, onChange*: proc(e: Event)
     `ref`*: cstring
     width*, height*: cint
 
-  BrowserWindow* {.importcpp.} = ref object of RootObj
+  BrowserWindow* {.importcpp.} = ref object of JsObject
     loadURL*: proc(url: cstring): void
-    on*: proc(event: EventName, f: proc(): void): void
 
     width*, height*, x*, y*: cint
 
@@ -42,8 +38,9 @@ type
 
     parent*: ref BrowserWindow
 
-    backgroundColor*: string
+    backgroundColor*: cstring
 
 var
   process* {.importcpp, nodecl.}: ElectronProcess
-  require* {.importc, nodecl.}: proc (l: cstring): Electron
+  require* {.importc, nodecl.}: proc (module: cstring): JsObject
+
